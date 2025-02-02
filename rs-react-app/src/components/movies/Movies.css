@@ -1,0 +1,50 @@
+.movies {
+  flex-grow: 1;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.movies thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
+.movies th,
+.movies td {
+  padding: 12px 15px;
+}
+
+.movies tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.movies tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.movies tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.movies_spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
