@@ -1,0 +1,23 @@
+import { IMovie } from '../types/movie';
+
+export class MovieService {
+  private baseUrl = 'https://stapi.co/api/v1/rest';
+
+  getMovies = (searchQuery: string): Promise<IMovie[]> => {
+    localStorage.setItem('moviesSearchQuery', searchQuery);
+
+    const formBody = new URLSearchParams({
+      title: searchQuery,
+    }).toString();
+
+    return fetch(`${this.baseUrl}/movie/search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formBody,
+    })
+      .then((response) => response.json())
+      .then(({ movies }) => movies);
+  };
+}
