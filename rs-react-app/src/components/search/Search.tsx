@@ -11,7 +11,7 @@ interface IState {
 
 export class Search extends Component<IProps, IState> {
   state: IState = {
-    value: '',
+    value: localStorage.getItem('moviesSearchQuery') || '',
   };
 
   handleSearch = () => {

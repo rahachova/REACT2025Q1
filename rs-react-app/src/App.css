@@ -4,11 +4,14 @@
   align-items: center;
   gap: 15px;
   width: 100%;
-  min-height: 100vh;
-  padding: 2rem;
+  padding: 20px 0;
   box-sizing: border-box;
 }
 
 .error-button {
   background-color: brown;
+}
+
+.fetch-error {
+  height: 100%;
 }

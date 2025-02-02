@@ -22,6 +22,10 @@ class App extends Component {
 
   movieService = new MovieService();
 
+  componentDidMount(): void {
+    this.handleMoviesSearch(localStorage.getItem('moviesSearchQuery') || '');
+  }
+
   throwError = () => {
     this.setState(({ hasError }: IState) => ({
       hasError: !hasError,
@@ -30,6 +34,7 @@ class App extends Component {
 
   handleMoviesSearch = async (search: string) => {
     this.setState({
+      fetchError: null,
       isLoading: true,
     });
 
@@ -55,7 +60,7 @@ class App extends Component {
   };
 
   render() {
-    const { hasError, movies, isLoading } = this.state;
+    const { hasError, movies, isLoading, fetchError } = this.state;
 
     if (hasError) {
       throw Error('Error!');
@@ -64,7 +69,15 @@ class App extends Component {
     return (
       <>
         <Search onSearch={this.handleMoviesSearch}></Search>
-        <Movies movies={movies} isLoading={isLoading} />
+        {fetchError ? (
+          <div className="fetch-error">
+            <strong>Error: </strong>
+            {fetchError}
+          </div>
+        ) : (
+          <Movies movies={movies} isLoading={isLoading} />
+        )}
+
         <button className="error-button" onClick={this.throwError}>
           Throw error
         </button>
