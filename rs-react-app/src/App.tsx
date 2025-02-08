@@ -1,89 +1,48 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { Search } from './components/search/Search';
 import { MovieService } from './services/movie-service';
 import { IMovie } from './types/movie';
 import { Movies } from './components/movies/Movies';
 import './App.css';
 
-interface IState {
-  isLoading: boolean;
-  hasError: boolean;
-  movies: IMovie[];
-  fetchError: string | null;
-}
+const movieService = new MovieService();
 
-class App extends Component {
-  state: IState = {
-    isLoading: false,
-    hasError: false,
-    movies: [],
-    fetchError: null,
-  };
+export function App() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [movies, setMovies] = useState<IMovie[]>([]);
+  const [fetchError, setFetchError] = useState<null | string>(null);
 
-  movieService = new MovieService();
+  useEffect(() => {
+    handleMoviesSearch(localStorage.getItem('moviesSearchQuery') || '');
+  }, []);
 
-  componentDidMount(): void {
-    this.handleMoviesSearch(localStorage.getItem('moviesSearchQuery') || '');
-  }
-
-  throwError = () => {
-    this.setState(({ hasError }: IState) => ({
-      hasError: !hasError,
-    }));
-  };
-
-  handleMoviesSearch = async (search: string) => {
-    this.setState({
-      fetchError: null,
-      isLoading: true,
-    });
+  const handleMoviesSearch = async (search: string) => {
+    setFetchError(null);
+    setIsLoading(true);
 
     try {
-      const movies = await this.movieService.getMovies(search);
-      this.setState({
-        movies: movies,
-        isLoading: false,
-      });
+      const movies = await movieService.getMovies(search);
+      setMovies(movies);
     } catch (error) {
-      if (error instanceof Error) {
-        this.setState({
-          fetchError: error.message,
-          isLoading: false,
-        });
-      } else {
-        this.setState({
-          fetchError: 'Unexpected error',
-          isLoading: false,
-        });
-      }
+      setFetchError(
+        error instanceof Error ? error.message : 'Unexpected error'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  render() {
-    const { hasError, movies, isLoading, fetchError } = this.state;
-
-    if (hasError) {
-      throw Error('Error!');
-    }
-
-    return (
-      <>
-        <Search onSearch={this.handleMoviesSearch}></Search>
-        {fetchError ? (
-          <div className="fetch-error">
-            <strong>Error: </strong>
-            {fetchError}
-          </div>
-        ) : (
-          <Movies movies={movies} isLoading={isLoading} />
-        )}
-
-        <button className="error-button" onClick={this.throwError}>
-          Throw error
-        </button>
-      </>
-    );
-  }
+  return (
+    <>
+      <Search onSearch={handleMoviesSearch} />
+      {fetchError ? (
+        <div className="fetch-error">
+          <strong>Error: </strong>
+          {fetchError}
+        </div>
+      ) : (
+        <Movies movies={movies} isLoading={isLoading} />
+      )}
+    </>
+  );
 }
-
-export default App;

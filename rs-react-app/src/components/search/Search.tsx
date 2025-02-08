@@ -1,39 +1,27 @@
-import { ChangeEvent, Component } from 'react';
+import { ChangeEvent, useState } from 'react';
 import './Search.css';
 
 interface IProps {
   onSearch: (search: string) => void;
 }
 
-interface IState {
-  value: string;
-}
+export function Search({ onSearch }: IProps) {
+  const [value, setValue] = useState<string>(
+    localStorage.getItem('moviesSearchQuery') || ''
+  );
 
-export class Search extends Component<IProps, IState> {
-  state: IState = {
-    value: localStorage.getItem('moviesSearchQuery') || '',
+  const handleSearch = () => {
+    onSearch(value);
   };
 
-  handleSearch = () => {
-    this.props.onSearch(this.state.value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
   };
 
-  handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      value: event.target.value,
-    });
-  };
-
-  render() {
-    return (
-      <div className="search">
-        <input
-          onChange={this.handleChange}
-          value={this.state.value}
-          type="text"
-        />
-        <button onClick={this.handleSearch}>Search</button>
-      </div>
-    );
-  }
+  return (
+    <div className="search">
+      <input onChange={handleChange} value={value} type="text" />
+      <button onClick={handleSearch}>Search</button>
+    </div>
+  );
 }
