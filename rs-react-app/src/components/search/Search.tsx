@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect } from 'react';
+import { useSearchQuery } from '../../hooks/useSearchQuery';
 import './Search.css';
 
 interface IProps {
@@ -6,21 +7,23 @@ interface IProps {
 }
 
 export function Search({ onSearch }: IProps) {
-  const [value, setValue] = useState<string>(
-    localStorage.getItem('moviesSearchQuery') || ''
-  );
+  const [query, setQuery] = useSearchQuery();
+
+  useEffect(() => {
+    onSearch(query);
+  }, [onSearch]);
 
   const handleSearch = () => {
-    onSearch(value);
+    onSearch(query);
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+    setQuery(event.target.value);
   };
 
   return (
     <div className="search">
-      <input onChange={handleChange} value={value} type="text" />
+      <input onChange={handleChange} value={query} type="text" />
       <button onClick={handleSearch}>Search</button>
     </div>
   );

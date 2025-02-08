@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Search } from './components/search/Search';
 import { MovieService } from './services/movie-service';
 import { IMovie } from './types/movie';
@@ -12,16 +12,12 @@ export function App() {
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [fetchError, setFetchError] = useState<null | string>(null);
 
-  useEffect(() => {
-    handleMoviesSearch(localStorage.getItem('moviesSearchQuery') || '');
-  }, []);
-
-  const handleMoviesSearch = async (search: string) => {
+  const handleMoviesSearch = useCallback(async (searchQuery: string) => {
     setFetchError(null);
     setIsLoading(true);
 
     try {
-      const movies = await movieService.getMovies(search);
+      const movies = await movieService.getMovies(searchQuery);
       setMovies(movies);
     } catch (error) {
       setFetchError(
@@ -30,7 +26,7 @@ export function App() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return (
     <>
