@@ -1,20 +1,24 @@
-import { ChangeEvent, useEffect } from 'react';
-import { useSearchQuery } from '../../hooks/useSearchQuery';
+import { ChangeEvent, useEffect, useState } from 'react';
 import './Search.css';
+import { useSearchParams } from 'react-router';
+import { useSearchQuery } from '../../hooks/useSearchQuery';
 
-interface IProps {
-  onSearch: ({ searchQuery }: { searchQuery?: string }) => void;
-}
-
-export function Search({ onSearch }: IProps) {
-  const [query, setQuery] = useSearchQuery();
+export function Search() {
+  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [savedSearchQuery, setSavedSearchQuery] = useSearchQuery();
 
   useEffect(() => {
-    onSearch({ searchQuery: query });
+    const searchQuery = searchParams.get('query') || savedSearchQuery;
+    if (searchQuery) {
+      setQuery(searchQuery);
+    }
   }, []);
 
   const handleSearch = () => {
-    onSearch({ searchQuery: query });
+    searchParams.set('query', query);
+    setSearchParams(searchParams);
+    setSavedSearchQuery(query);
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

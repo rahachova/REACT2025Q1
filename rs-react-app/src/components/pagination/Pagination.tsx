@@ -1,27 +1,32 @@
 import { useCallback } from 'react';
+import { useSearchParams } from 'react-router';
 import './Pagination.css';
 
 interface IProps {
-  currentPage: number;
-  totalPages: number;
   firstPage: boolean;
   lastPage: boolean;
-  onPageChange: (page: number) => void;
 }
 
-export function Pagination({
-  currentPage,
-  firstPage,
-  lastPage,
-  onPageChange,
-}: IProps) {
+export function Pagination({ firstPage, lastPage }: IProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentPage = Number(searchParams.get('page')) || 0;
+
   const handlePrev = useCallback(() => {
-    if (!firstPage) onPageChange(currentPage - 1);
-  }, [currentPage, firstPage, onPageChange]);
+    if (!firstPage) {
+      const newPage = currentPage - 1;
+      searchParams.set('page', newPage.toString());
+      setSearchParams(searchParams);
+    }
+  }, [currentPage, firstPage, searchParams, setSearchParams]);
 
   const handleNext = useCallback(() => {
-    if (!lastPage) onPageChange(currentPage + 1);
-  }, [currentPage, lastPage, onPageChange]);
+    if (!lastPage) {
+      const newPage = currentPage + 1;
+      searchParams.set('page', newPage.toString());
+      setSearchParams(searchParams);
+    }
+  }, [currentPage, lastPage, searchParams, setSearchParams]);
 
   return (
     <div className="pagination">

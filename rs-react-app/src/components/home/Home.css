@@ -1,0 +1,8 @@
+.fetch-error {
+  height: 100%;
+}
+
+.home-container {
+  flex-grow: 1;
+  display: flex;
+}
