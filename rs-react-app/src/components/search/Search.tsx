@@ -3,18 +3,18 @@ import { useSearchQuery } from '../../hooks/useSearchQuery';
 import './Search.css';
 
 interface IProps {
-  onSearch: (search: string) => void;
+  onSearch: ({ searchQuery }: { searchQuery?: string }) => void;
 }
 
 export function Search({ onSearch }: IProps) {
   const [query, setQuery] = useSearchQuery();
 
   useEffect(() => {
-    onSearch(query);
-  }, [onSearch]);
+    onSearch({ searchQuery: query });
+  }, []);
 
   const handleSearch = () => {
-    onSearch(query);
+    onSearch({ searchQuery: query });
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
