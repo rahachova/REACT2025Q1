@@ -30,7 +30,7 @@ export function Pagination({ firstPage, lastPage }: IProps) {
 
   return (
     <div className="pagination">
-      <button onClick={handlePrev} disabled={firstPage}>
+      <button onClick={handlePrev} disabled={firstPage} aria-label="prev">
         <svg
           width="24"
           height="24"
@@ -50,7 +50,7 @@ export function Pagination({ firstPage, lastPage }: IProps) {
 
       <div className="pagination_current-page">{currentPage + 1}</div>
 
-      <button onClick={handleNext} disabled={lastPage}>
+      <button onClick={handleNext} disabled={lastPage} aria-label="next">
         <svg
           width="24"
           height="24"
