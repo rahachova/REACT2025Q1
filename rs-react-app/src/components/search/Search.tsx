@@ -1,39 +1,34 @@
-import { ChangeEvent, Component } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import './Search.css';
+import { useSearchParams } from 'react-router';
+import { useSearchQuery } from '../../hooks/useSearchQuery';
 
-interface IProps {
-  onSearch: (search: string) => void;
-}
+export function Search() {
+  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [savedSearchQuery, setSavedSearchQuery] = useSearchQuery();
 
-interface IState {
-  value: string;
-}
+  useEffect(() => {
+    const searchQuery = searchParams.get('query') || savedSearchQuery;
+    if (searchQuery) {
+      setQuery(searchQuery);
+    }
+  }, []);
 
-export class Search extends Component<IProps, IState> {
-  state: IState = {
-    value: localStorage.getItem('moviesSearchQuery') || '',
+  const handleSearch = () => {
+    searchParams.set('query', query);
+    setSearchParams(searchParams);
+    setSavedSearchQuery(query);
   };
 
-  handleSearch = () => {
-    this.props.onSearch(this.state.value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
   };
 
-  handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      value: event.target.value,
-    });
-  };
-
-  render() {
-    return (
-      <div className="search">
-        <input
-          onChange={this.handleChange}
-          value={this.state.value}
-          type="text"
-        />
-        <button onClick={this.handleSearch}>Search</button>
-      </div>
-    );
-  }
+  return (
+    <div className="search">
+      <input onChange={handleChange} value={query} type="text" />
+      <button onClick={handleSearch}>Search</button>
+    </div>
+  );
 }

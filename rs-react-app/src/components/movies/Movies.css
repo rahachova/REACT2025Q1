@@ -1,9 +1,17 @@
+.movie {
+  cursor: pointer;
+}
+
 .movies_container {
-  flex-grow: 1;
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  border: 1px solid black;
 }
 
 .movies {
-  flex-grow: 1;
   border-collapse: collapse;
   margin: 25px 0;
   font-size: 0.9em;
@@ -33,22 +41,6 @@
 
 .movies tbody tr:last-of-type {
   border-bottom: 2px solid #009879;
-}
-
-.movies_spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.movies_spinner {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #3498db;
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

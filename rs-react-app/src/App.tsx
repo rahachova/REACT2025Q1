@@ -1,89 +1,16 @@
-import { Component } from 'react';
-import { Search } from './components/search/Search';
-import { MovieService } from './services/movie-service';
-import { IMovie } from './types/movie';
-import { Movies } from './components/movies/Movies';
 import './App.css';
+import { Home } from './components/home/Home';
+import { Routes, Route } from 'react-router';
+import { MovieDetails } from './components/movie-details/MovieDetails';
+import { NotFound } from './components/not-found/NotFound';
 
-interface IState {
-  isLoading: boolean;
-  hasError: boolean;
-  movies: IMovie[];
-  fetchError: string | null;
+export function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />}>
+        <Route index element={<MovieDetails />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
 }
-
-class App extends Component {
-  state: IState = {
-    isLoading: false,
-    hasError: false,
-    movies: [],
-    fetchError: null,
-  };
-
-  movieService = new MovieService();
-
-  componentDidMount(): void {
-    this.handleMoviesSearch(localStorage.getItem('moviesSearchQuery') || '');
-  }
-
-  throwError = () => {
-    this.setState(({ hasError }: IState) => ({
-      hasError: !hasError,
-    }));
-  };
-
-  handleMoviesSearch = async (search: string) => {
-    this.setState({
-      fetchError: null,
-      isLoading: true,
-    });
-
-    try {
-      const movies = await this.movieService.getMovies(search);
-      this.setState({
-        movies: movies,
-        isLoading: false,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        this.setState({
-          fetchError: error.message,
-          isLoading: false,
-        });
-      } else {
-        this.setState({
-          fetchError: 'Unexpected error',
-          isLoading: false,
-        });
-      }
-    }
-  };
-
-  render() {
-    const { hasError, movies, isLoading, fetchError } = this.state;
-
-    if (hasError) {
-      throw Error('Error!');
-    }
-
-    return (
-      <>
-        <Search onSearch={this.handleMoviesSearch}></Search>
-        {fetchError ? (
-          <div className="fetch-error">
-            <strong>Error: </strong>
-            {fetchError}
-          </div>
-        ) : (
-          <Movies movies={movies} isLoading={isLoading} />
-        )}
-
-        <button className="error-button" onClick={this.throwError}>
-          Throw error
-        </button>
-      </>
-    );
-  }
-}
-
-export default App;

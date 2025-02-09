@@ -7,11 +7,3 @@
   padding: 20px 0;
   box-sizing: border-box;
 }
-
-.error-button {
-  background-color: brown;
-}
-
-.fetch-error {
-  height: 100%;
-}
