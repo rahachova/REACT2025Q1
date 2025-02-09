@@ -58,10 +58,9 @@ export function Home() {
   }, [handleMoviesSearch, pageNumber, searchQuery]);
 
   useEffect(() => {
-    setSearchParams({
-      page: pageNumber || '0',
-      query: searchQuery || savedSearchQuery,
-    });
+    searchParams.set('page', pageNumber || '0');
+    searchParams.set('query', searchQuery || savedSearchQuery);
+    setSearchParams(searchParams);
   }, []);
 
   return (

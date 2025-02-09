@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { IMovie } from '../../types/movie';
+import { useSearchParams } from 'react-router';
 import './Movies.css';
+import { Spinner } from '../spinner/Spinner';
 
 interface IProps {
   movies: IMovie[];
@@ -8,13 +10,15 @@ interface IProps {
 }
 
 export function Movies({ movies, isLoading }: IProps) {
-  const spinner = useMemo(() => {
-    return (
-      <div className="movies_spinner-container">
-        <div className="movies_spinner"></div>
-      </div>
-    );
-  }, []);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleMovieSelect = useCallback(
+    (uid: string) => {
+      searchParams.set('details', uid);
+      setSearchParams(searchParams);
+    },
+    [searchParams, setSearchParams]
+  );
 
   const moviesTable = useMemo(() => {
     return movies.length ? (
@@ -28,7 +32,11 @@ export function Movies({ movies, isLoading }: IProps) {
         </thead>
         <tbody>
           {movies.map(({ uid, title, usReleaseDate, mainDirector }) => (
-            <tr key={uid} className="movie">
+            <tr
+              onClick={() => handleMovieSelect(uid)}
+              key={uid}
+              className="movie"
+            >
               <td>{title}</td>
               <td>{usReleaseDate}</td>
               <td>{mainDirector.name}</td>
@@ -39,9 +47,11 @@ export function Movies({ movies, isLoading }: IProps) {
     ) : (
       <div>No movies with such name</div>
     );
-  }, [movies]);
+  }, [handleMovieSelect, movies]);
 
   return (
-    <div className="movies_container">{isLoading ? spinner : moviesTable}</div>
+    <div className="movies_container">
+      {isLoading ? <Spinner /> : moviesTable}
+    </div>
   );
 }
