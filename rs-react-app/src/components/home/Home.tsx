@@ -59,8 +59,8 @@ export function Home() {
 
   useEffect(() => {
     setSearchParams({
-      page: '0',
-      query: searchParams.get('query') || savedSearchQuery,
+      page: pageNumber || '0',
+      query: searchQuery || savedSearchQuery,
     });
   }, []);
 
