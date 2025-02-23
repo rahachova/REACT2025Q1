@@ -9,3 +9,17 @@
   gap: 20px;
   width: 100%;
 }
+
+.controls {
+  display: flex;
+  gap: 60px;
+}
+
+.theme-toggle {
+  background-color: rgba(177, 253, 229, 0.775);
+}
+
+.dark .theme-toggle {
+  background-color: rgba(3, 99, 69, 0.775);
+  color: white;
+}

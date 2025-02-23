@@ -9,8 +9,10 @@ import { useGetMoviesQuery } from '../../store/services/movies';
 import { Spinner } from '../spinner/Spinner';
 
 import './Home.css';
+import { useTheme } from '../../context/theme/use-theme';
 
 export function Home() {
+  const { theme, toggleTheme } = useTheme();
   const [savedSearchQuery] = useSearchQuery();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -52,7 +54,12 @@ export function Home() {
 
   return (
     <>
-      <Search />
+      <div className="controls">
+        <Search />
+        <button onClick={toggleTheme} className="theme-toggle">
+          Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+        </button>
+      </div>
       {error ? (
         <div className="fetch-error">
           <strong>Error: </strong>
