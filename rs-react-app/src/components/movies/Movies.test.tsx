@@ -1,9 +1,10 @@
 import { describe, test, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { Movies } from './Movies';
 import { vi } from 'vitest';
 import { IMovie } from '../../types/movie';
+import { renderWithProviders } from '../../utils/test-utils';
 
 const mockSetSearchParams = vi.fn();
 
@@ -19,16 +20,6 @@ vi.mock('react-router', async () => {
 });
 
 describe('Movies Component', () => {
-  test('renders loading spinner when isLoading is true', () => {
-    render(
-      <MemoryRouter>
-        <Movies movies={[]} isLoading={true} />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByTestId('spinner')).toBeInTheDocument();
-  });
-
   test('renders movie table when there are movies', () => {
     const mockMovies: IMovie[] = [
       {
@@ -47,9 +38,9 @@ describe('Movies Component', () => {
       },
     ];
 
-    render(
+    renderWithProviders(
       <MemoryRouter>
-        <Movies movies={mockMovies} isLoading={false} />
+        <Movies movies={mockMovies} />
       </MemoryRouter>
     );
 
@@ -58,9 +49,9 @@ describe('Movies Component', () => {
   });
 
   test("displays 'No movies with such name' when movies array is empty", () => {
-    render(
+    renderWithProviders(
       <MemoryRouter>
-        <Movies movies={[]} isLoading={false} />
+        <Movies movies={[]} />
       </MemoryRouter>
     );
 
@@ -78,9 +69,9 @@ describe('Movies Component', () => {
       },
     ];
 
-    render(
+    renderWithProviders(
       <MemoryRouter>
-        <Movies movies={mockMovies} isLoading={false} />
+        <Movies movies={mockMovies} />
       </MemoryRouter>
     );
 

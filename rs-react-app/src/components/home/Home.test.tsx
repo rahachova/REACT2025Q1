@@ -1,8 +1,10 @@
-import { describe, test, expect } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, test, expect, afterAll, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { Home } from './Home';
-import { vi } from 'vitest';
+import { renderWithProviders } from '../../utils/test-utils';
+import { http, HttpResponse, delay } from 'msw';
+import { setupServer } from 'msw/node';
 
 const mockMovies = [
   {
@@ -21,17 +23,34 @@ const mockMovies = [
 
 const mockPagination = { totalPages: 2, firstPage: false, lastPage: false };
 
-vi.mock(import('../../services/movie-service'), () => {
-  const MovieService = vi.fn();
-  MovieService.prototype.getMovies = vi.fn(() =>
-    Promise.resolve({ movies: mockMovies, page: mockPagination })
-  );
-  return { MovieService };
-});
+export const handlers = [
+  http.post('https://stapi.co/api/v1/rest/movie/search', async () => {
+    await delay(150);
+    return HttpResponse.json({ movies: mockMovies, page: mockPagination });
+  }),
+];
+
+const server = setupServer(...handlers);
+
+beforeAll(() => server.listen());
+
+afterEach(() => server.resetHandlers());
+
+afterAll(() => server.close());
 
 describe('Home Component', () => {
+  test('renders loading spinner', async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/']}>
+        <Home />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
+  });
+
   test('displays movies after search query', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/']}>
         <Home />
       </MemoryRouter>
@@ -49,7 +68,7 @@ describe('Home Component', () => {
   });
 
   test('shows a loading spinner while movies are loading', () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/']}>
         <Home />
       </MemoryRouter>
@@ -61,7 +80,7 @@ describe('Home Component', () => {
   });
 
   test('renders pagination correctly with current page', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/']}>
         <Home />
       </MemoryRouter>
