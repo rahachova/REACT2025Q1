@@ -46,6 +46,11 @@ button {
   transition: border-color 0.25s;
 }
 
+.dark button {
+  background-color: #474747;
+  color: #b0b0b0;
+}
+
 button:disabled {
   cursor: not-allowed;
 }

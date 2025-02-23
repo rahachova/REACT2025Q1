@@ -1,8 +1,10 @@
-import { describe, test, expect } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, test, expect, beforeAll, afterEach, afterAll } from 'vitest';
+import { http, HttpResponse, delay } from 'msw';
+import { setupServer } from 'msw/node';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { MovieDetails } from './MovieDetails';
-import { vi } from 'vitest';
+import { renderWithProviders } from '../../utils/test-utils';
 
 const mockMovie = {
   uid: '1',
@@ -15,17 +17,24 @@ const mockMovie = {
   ],
 };
 
-vi.mock(import('../../services/movie-service'), () => {
-  const MovieService = vi.fn();
-  MovieService.prototype.getMovie = vi.fn(() =>
-    Promise.resolve({ movie: mockMovie })
-  );
-  return { MovieService };
-});
+export const handlers = [
+  http.get('https://stapi.co/api/v1/rest/movie?uid=1', async () => {
+    await delay(150);
+    return HttpResponse.json({ movie: mockMovie });
+  }),
+];
+
+const server = setupServer(...handlers);
+
+beforeAll(() => server.listen());
+
+afterEach(() => server.resetHandlers());
+
+afterAll(() => server.close());
 
 describe('MovieDetails Component', () => {
   test('shows loading spinner while fetching movie data', () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/movie?details=1']}>
         <MovieDetails />
       </MemoryRouter>
@@ -35,7 +44,7 @@ describe('MovieDetails Component', () => {
   });
 
   test('renders movie details when data is fetched', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/movie?details=1']}>
         <MovieDetails />
       </MemoryRouter>
@@ -51,7 +60,7 @@ describe('MovieDetails Component', () => {
   });
 
   test('renders loading spinner and then movie details after data fetch', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/movie?details=1']}>
         <MovieDetails />
       </MemoryRouter>
@@ -65,7 +74,7 @@ describe('MovieDetails Component', () => {
   });
 
   test('closes movie details when close button is clicked', async () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/movie?details=1']}>
         <MovieDetails />
       </MemoryRouter>
@@ -80,7 +89,7 @@ describe('MovieDetails Component', () => {
   });
 
   test('does not render movie details when no details param is in URL', () => {
-    render(
+    renderWithProviders(
       <MemoryRouter initialEntries={['/movie']}>
         <MovieDetails />
       </MemoryRouter>

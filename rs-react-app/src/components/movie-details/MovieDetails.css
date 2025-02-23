@@ -4,6 +4,10 @@
   border: 1px solid black;
 }
 
+.dark .movie-details {
+  border-color: #015241;
+}
+
 .movie-details_heading {
   display: flex;
   align-items: center;
